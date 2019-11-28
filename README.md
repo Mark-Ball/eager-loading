@@ -1,24 +1,35 @@
-# README
+# Eager loading
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## 1. The n + 1 problem
 
-Things you may want to cover:
+The n + 1 problem describes an issue in querying a relational database where many additional queries must be made to a table related to an original table for more information.
 
-* Ruby version
+For example, lets say we have a users table with 10 records. Each of these users has an address, so we also have an addresses table with an address for each user, which references the users table with a foreign key.
 
-* System dependencies
+When we want to find the addresses of our 10 users we have to make 1 query to get the users, then for each user we must make an additional query to get the address. This results in 11 (i.e. n + 1) queries.
 
-* Configuration
+## 2. Lazy loading
 
-* Database creation
+For our example, we want to print all users and addresses to the page.
 
-* Database initialization
+In our controller we have this method, which we are using to send information on our users to the view:
+```Ruby
+def index
+    @users = User.all
+end
+```
 
-* How to run the test suite
+In our view we are iterating over our array of users and using dot notation to query their addresses:
+```html
+<% @users.each { |user| %>
+    <tr>
+        <td><%= user.name %></td>
+        <td><%= user.address.street %></td>
+        <td><%= user.address.city %></td>
+    </tr>
+<% } %>
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+The number of queries required to render this page can be observed from the terminal. For our addresses on 10 users, we observe 11 queries:
+![lazy_loading](docs/lazy_loading.jpg)
 
-* Deployment instructions
-
-* ...

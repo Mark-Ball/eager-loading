@@ -12,8 +12,8 @@
         <% @users.each { |user| %>
             <tr>
                 <td><%= user.name %></td>
-                <td><%= user.street %></td>
-                <td><%= user.city %></td>
+                <td><%= user.address.street %></td>
+                <td><%= user.address.city %></td>
             </tr>
         <% } %>
     </tbody>
