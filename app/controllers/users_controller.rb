@@ -4,5 +4,6 @@ class UsersController < ApplicationController
     end
 
     def eager
+        @users = User.includes(address: [:street, :city]).all
     end
 end

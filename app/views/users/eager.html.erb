@@ -1,1 +1,20 @@
 <h1>Eager loading</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name </th>
+            <th>Street</th>
+            <th>City</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @users.each { |user| %>
+            <tr>
+                <td><%= user.name %></td>
+                <td><%= user.street %></td>
+                <td><%= user.city %></td>
+            </tr>
+        <% } %>
+    </tbody>
+</table>
