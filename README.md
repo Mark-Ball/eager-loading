@@ -33,3 +33,16 @@ In our view we are iterating over our array of users and using dot notation to q
 The number of queries required to render this page can be observed from the terminal. For our addresses on 10 users, we observe 11 queries:
 ![lazy_loading](docs/lazy_loading.jpg)
 
+## 3. Eager loading
+
+We will render all the same information to the page, but this time we will use eager loading to reduce the number of queries to the database.
+
+In our controller, we now use the method 'includes' to eager load the associations we want. We know in advance that we want the addresses on our users, so we simply include the name of the model as the argument to includes.
+```Ruby
+def eager
+    @users = User.includes(:address).all
+end
+```
+
+This reduces the number of database queries to the following:
+![eager_loading](docs/eager_loading.jpg)
