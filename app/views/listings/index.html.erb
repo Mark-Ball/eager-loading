@@ -1,6 +1,24 @@
 <h1>Listings - lazy load</h1>
 
-<% @listings.each { |listing| %>
-    <%= listing.name %>
-    <%= listing.price %>
-<% } %>
+<table>
+    <thead>
+        <tr>
+            <th>Listing name</th>
+            <th>Price</th>
+            <th>Owner</th>
+            <th>Owner address</th>
+            <th>Image</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @listings.each { |listing| %>
+            <tr>
+                <td><%= listing.name %></td>
+                <td><%= listing.price %></td>
+                <td><%= listing.user.name %></td>
+                <td><%= listing.user.address.street %></td>
+                <td><%= image_tag listing.image %></td>
+            </tr>
+        <% } %>
+    </tbody>
+</table>
