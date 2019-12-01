@@ -46,3 +46,35 @@ end
 
 This reduces the number of database queries to the following:
 ![eager_loading](docs/eager_loading.jpg)
+
+## 4. Advanced eager loading: multiple associations and nested associations
+
+Rails active record also gives us the ability to eager load multiple associations and nested associations.
+
+Let's consider the following database:
+![erd](docs/erd.jpg)
+
+We want to load:
+- all listings
+- all images on the listings 
+- all users on these listings
+- all addresses on these users
+
+This will require us to load multiple associated tables (users and image_attachments) and multiple tables attached to those tables (addresses and blobs). We could use lazy loading as follows:
+```Ruby
+def index
+    @listings = Listing.all
+end
+```
+
+However this produces a massive amount of queries.
+
+Once we have identified the tables which must be eager loaded, we include them in the database call with the following syntax:
+```Ruby
+def eager
+    @listings = Listing.includes(:user => :address, :image_attachment => :blob).all
+end
+```
+
+This produces a total of five database queries:
+![listings_eager_loading](docs/listings_eager_loading.jpg)
