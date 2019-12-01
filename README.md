@@ -31,6 +31,7 @@ In our view we are iterating over our array of users and using dot notation to q
 ```
 
 The number of queries required to render this page can be observed from the terminal. For our addresses on 10 users, we observe 11 queries:
+
 ![lazy_loading](docs/lazy_loading.jpg)
 
 ## 3. Eager loading
@@ -45,6 +46,7 @@ end
 ```
 
 This reduces the number of database queries to the following:
+
 ![eager_loading](docs/eager_loading.jpg)
 
 ## 4. Advanced eager loading: multiple associations and nested associations
@@ -52,6 +54,7 @@ This reduces the number of database queries to the following:
 Rails active record also gives us the ability to eager load multiple associations and nested associations.
 
 Let's consider the following database:
+
 ![erd](docs/erd.jpg)
 
 We want to load:
@@ -67,14 +70,35 @@ def index
 end
 ```
 
-However this produces a massive amount of queries.
+However this produces 101 queries.
+- 1 for listings
+- 20 for users (because we have 20 listings, each with 1 user)
+- 20 for addresses (20 users each with 1 address)
+- 20 for active storage attachments (20 listings each with 1 attachment)
+- 20 for active storage blobs (20 attachments each with 1 image)
+- 20 for additional searches for blobs because the images must be access from storage
 
-Once we have identified the tables which must be eager loaded, we include them in the database call with the following syntax:
+Fortunately, we can improve this with eager loading. Once we have identified the tables which must be eager loaded, we include them in the database call with the following syntax:
 ```Ruby
 def eager
     @listings = Listing.includes(:user => :address, :image_attachment => :blob).all
 end
 ```
 
-This produces a total of five database queries:
+This eager loads user and address (which is a nested association of user i.e. addresses does not have a foreign key for listings) and image_attachments and blob. Image_attachment and blob are the way we reference the Active Storage tables, i.e. active_storage_attachments and active_storage_blobs. In our case the association is called 'image' attachment as opposed to some other type of attachment because of the relationship we wrote into the listing model.
+```Ruby
+class Listing < ApplicationRecord
+  belongs_to :user
+  has_one_attached :image
+end
+```
+
+This produces a total of 26 database queries:
+- 1 for listings
+- 1 for users
+- 1 for addresses
+- 1 for active storage attachments
+- 1 for active storage blobs
+- 20 for additional searches for blobs because the images must be access from storage (not shown in screenshot due to space limitations)
+
 ![listings_eager_loading](docs/listings_eager_loading.jpg)
