@@ -1,0 +1,42 @@
+Table users {
+  id int [pk]
+  name string
+  email string
+}
+
+Table addresses {
+  id int [pk]
+  street string
+  city string
+  user_id int
+}
+
+Ref: addresses.user_id - users.id
+
+Table listings {
+  id int [pk]
+  name string
+  price int
+  user_id int
+}
+
+Ref: listings.user_id > users.id
+
+Table active_storage_attachments {
+  id int [pk]
+  name string
+  record_type string
+  record_id int
+  blob_id int
+}
+
+Ref: active_storage_attachments.record_id - listings.id
+
+Table active_storage_blobs {
+  id int [pk]
+  key string
+  filename string
+  content_type string
+}
+
+Ref: active_storage_blobs.id - active_storage_attachments.blob_id
